@@ -2,6 +2,7 @@ import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 import scalafx.collections.ObservableBuffer
+import scalafx.scene.control.TextArea
 
 object Main2 extends App {
 
@@ -61,7 +62,7 @@ object Main2 extends App {
       return query
     }
 
-    def searchByDepth(df2: RDD[String], minDepth: Double, maxDepth: Double): RDD[String] = { //min e max vengono passati come stringhe e poi modificati all'interno della funzione
+    def searchByDepth(df2: RDD[String], minDepth: Double = 0, maxDepth: Double = 700): RDD[String] = { //min e max vengono passati come stringhe e poi modificati all'interno della funzione
       val query = df2
         .flatMap(lines => lines.split("\n")
           .filter(value => value.split(",")(12).toDouble >= minDepth)
@@ -70,7 +71,7 @@ object Main2 extends App {
       return query
     }
 
-    def searchByMag(df2: RDD[String], minMag: Double, maxMag: Double): RDD[String] = {
+    def searchByMag(df2: RDD[String], minMag: Double = 0, maxMag: Double = 8): RDD[String] = {
       val query = df2
         .flatMap(lines => lines.split("\n")
           .filter(value => value.split(",")(13).toDouble >= minMag)
@@ -120,4 +121,23 @@ object Main2 extends App {
         )
       return query
     }
+
+  def searchByLatLon(df2 : RDD[String], lat : Double, lon : Double): RDD[String] ={
+//    if ((lat - lon).abs < precision) true else false
+    val precision = 0.5
+    val query = df2
+      .flatMap(lines => lines.split("\n")
+        .filter(value => Math.abs(lat - value.split(",")(7).toDouble) <= precision)
+        .filter(value =>  Math.abs(lon - value.split(",")(8).toDouble) <= precision)
+      )
+    return query
+  }
+
+  def output2(rdd : RDD[String], txtA : TextArea) ={
+//    val rdd2 = rdd.cache()
+    rdd.flatMap(lines => lines.split("\n")).map(x =>{
+      val arr = x.split(",")
+      txtA.appendText(arr(9) + "\t" + arr(10) + "\t" + arr(11) + "\t" + ("%1.2f".format(arr(7).toDouble)).toString + "\t" + ("%1.2f".format(arr(8).toDouble)).toString + "\t" + arr(1) + "\t" + arr(2) + "\t" + arr(3) + "\t" + arr(4) + "\t" + arr(5) + "\t" + arr(12) + "\t" + arr(13) + "\n")
+    })
+  }
   }
