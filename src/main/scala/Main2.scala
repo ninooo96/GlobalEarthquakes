@@ -124,7 +124,7 @@ object Main2 extends App {
 
   def searchByLatLon(df2 : RDD[String], lat : Double, lon : Double): RDD[String] ={
 //    if ((lat - lon).abs < precision) true else false
-    val precision = 0.5
+    val precision = 0.25
     val query = df2
       .flatMap(lines => lines.split("\n")
         .filter(value => Math.abs(lat - value.split(",")(7).toDouble) <= precision)

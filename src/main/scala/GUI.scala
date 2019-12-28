@@ -1,6 +1,7 @@
 
 //import Main2
 import multirange.MultiRange
+import org.apache.spark
 import org.apache.spark.rdd.RDD
 import scalafx.application.{JFXApp, Platform}
 import scalafx.scene.control.TableColumn._
@@ -16,6 +17,8 @@ import scalafx.scene.image.{Image, ImageView, WritableImage}
 import scalafx.scene.layout.{AnchorPane, BorderPane, GridPane}
 import scalafx.Includes._
 import scalafx.scene.control.Alert.AlertType
+import scalafx.scene.input.MouseEvent
+import scalafx.stage.FileChooser
 import scalafx.{application, stage}
 
 import scala.collection.{TraversableOnce, mutable}
@@ -27,6 +30,7 @@ object HelloSBT extends JFXApp {
   //  Main2
   val df = Main2.init() //df2
   var query = df//Main2.searchByYear(df,2018)
+
   //  var
 //  query = Main2.searchByKey(query,2018.toString)
 //  query.saveAsTextFile("ciao2")
@@ -216,7 +220,7 @@ object HelloSBT extends JFXApp {
         add(depthMax, 1, 0)
       }, 0, 3)
 
-      grid.add(new Label("Year "), 0, 4)
+      grid.add(new Label("Year (Min, Max) "), 0, 4)
       grid.add(new GridPane {
         add(yearMin, 0, 0)
         add(yearMax, 1, 0)
@@ -272,115 +276,124 @@ object HelloSBT extends JFXApp {
       }
 
       save.onAction = (e : ActionEvent) => {
-        query.saveAsTextFile("prova")
+        val fileChooser = new FileChooser
+        val selectedFile = fileChooser.showSaveDialog(stage)
+        query.saveAsTextFile(selectedFile.getAbsolutePath)
       }
 
       submit.onAction = (e:ActionEvent) => {
-//        grid.add(progress,3,2)
+        var ok = true
+        //        grid.add(progress,3,2)
         info.text = ""
-        monthComboLabel.text = "Month"
-//        var anchor2 = anchor
-//        println(getCombo(monthCombo)+" -CIAOOOOOOOO")
-        var subQuery = query
+//        monthComboLabel.text = "Month"
+        //        var anchor2 = anchor
+        //        println(getCombo(monthCombo)+" -CIAOOOOOOOO")
+        var subQuery = df
         if (!magMin.getText.equals("") && !magMax.getText.equals("")) {
           subQuery = Main2.searchByMag(subQuery, magMin.getText.toDouble, magMax.getText.toDouble)
-//          subQuery.saveAsTextFile("ciaoo")
+          //          subQuery.saveAsTextFile("ciaoo")
         }
-        else if (!magMin.getText.equals("")){
+        else if (!magMin.getText.equals("")) {
           subQuery = Main2.searchByMag(subQuery, minMag = magMin.getText.toDouble)
         }
-        else if (!magMax.getText.equals("")){
+        else if (!magMax.getText.equals("")) {
           subQuery = Main2.searchByMag(subQuery, maxMag = magMax.getText.toDouble)
         }
 
         if (!depthMin.getText.equals("") && !depthMax.getText.equals("")) {
           subQuery = Main2.searchByDepth(subQuery, depthMin.getText.toDouble, depthMax.getText.toDouble)
         }
-        else if (!depthMin.getText.equals("")){
+        else if (!depthMin.getText.equals("")) {
           subQuery = Main2.searchByDepth(subQuery, minDepth = depthMin.getText.toDouble)
         }
-        else if (!depthMax.getText.equals("")){
+        else if (!depthMax.getText.equals("")) {
           subQuery = Main2.searchByDepth(subQuery, maxDepth = depthMax.getText.toDouble)
         }
 
         if (!yearMin.getText.equals("") && !yearMax.getText.equals("")) {
           subQuery = Main2.searchByDateRange(subQuery, minYear = yearMin.getText.toInt, maxYear = depthMax.getText.toInt)
         }
-        else if (!yearMin.getText.equals("")){
+        else if (!yearMin.getText.equals("")) {
           subQuery = Main2.searchByDateRange(subQuery, minYear = yearMin.getText.toInt)
         }
-        else if (!yearMax.getText.equals("")){
+        else if (!yearMax.getText.equals("")) {
           subQuery = Main2.searchByDateRange(subQuery, maxYear = yearMax.getText.toInt)
         }
 
-        if(!getCombo(yearCombo).equals(0) && !getCombo(monthCombo).equals(0) && !getCombo(dayCombo).equals(0)){
-          subQuery = Main2.searchByDate(subQuery, getCombo(yearCombo),getCombo(monthCombo), getCombo(dayCombo))
+        if (!getCombo(yearCombo).equals(0) && !getCombo(monthCombo).equals(0) && !getCombo(dayCombo).equals(0)) {
+          subQuery = Main2.searchByDate(subQuery, getCombo(yearCombo), getCombo(monthCombo), getCombo(dayCombo))
         }
-        else if(!getCombo(yearCombo).equals(0) && !getCombo(monthCombo).equals(0)){
-//          query = Main2.searchByDate(df,yearCombo.getPromptText.toInt, monthCombo.getPromptText.toInt)
-          subQuery = Main2.searchByMonth(Main2.searchByYear(subQuery,getCombo(yearCombo)),getCombo(monthCombo))
+        else if (!getCombo(yearCombo).equals(0) && !getCombo(monthCombo).equals(0)) {
+          //          query = Main2.searchByDate(df,yearCombo.getPromptText.toInt, monthCombo.getPromptText.toInt)
+          subQuery = Main2.searchByMonth(Main2.searchByYear(subQuery, getCombo(yearCombo)), getCombo(monthCombo))
         }
-        else if(!getCombo(yearCombo).equals(0) && !getCombo(dayCombo).equals(0)){
-//          val tmp = List[Print]
-//
-//          subQuery = new RDD[String] () 
-//          table = output(tmp)
-          monthComboLabel.text = "Insert the month!!"
+        else if (!getCombo(yearCombo).equals(0) && !getCombo(dayCombo).equals(0)) {
+          /** subQuery = RDD vuoto **/
+          //          val tmp = List[Print]
+          //
+          //          subQuery = spark.sparkContext.parallelize(Seq(("Java"))
+          //          table = output(tmp)
+          ok = false
+//          monthComboLabel.text = "Insert the month!!"
 
 
           //          println(getCombo(monthCombo)+" -CIAOOOOOOOO")
-//          new Alert(AlertType.Error) {
-//            initOwner(stage)
-//            title = "Error Dialog"
-//            headerText = "Error"
-//            contentText = "You must indicate the month for the query!"
-//          }.showAndWait()
-//            val thread = new Thread {
-//              override def run {
-//                // your custom behavior here
-//                new Alert(AlertType.Information, "Hello Dialogs!!!").showAndWait()
-//              }
-//            }
-//          Platform.runLater( new Runnable {
-//            override def run(): Unit = {
-//              new Alert(AlertType.Information, "Hello Dialogs!!!").showAndWait()
-//            }
-//          })
-        }
-        else if(!getCombo(monthCombo).equals(0) && !getCombo(dayCombo).equals(0)){
-          //          query = Main2.searchByDate(df,yearCombo.getPromptText.toInt, monthCombo.getPromptText.toInt)
-          subQuery = Main2.searchByDay(Main2.searchByMonth(subQuery,getCombo(monthCombo)),getCombo(dayCombo))
-        }
-
-        if (!keyword.getText.equals("")){
-          println(keyword.getText)
-//          query.saveAsTextFile("prova3")
-          subQuery = Main2.searchByKey(subQuery, keyword.getText)
-
-        }
-
-        if(!latitude.getText.equals("") && !longitude.getText.equals("")){
-          subQuery = Main2.searchByLatLon(subQuery, latitude.getText.toDouble, longitude.getText.toDouble)
-        }
-        else if (latitude.getText.equals("") ^ longitude.getText.equals("")){
           new Alert(AlertType.Error) {
             initOwner(stage)
             title = "Error Dialog"
             headerText = "Error"
-            contentText = "You must indicate both latitude and longitude for the query!"
+            contentText = "You must indicate the month for the query!"
+          }.showAndWait()
+          //            val thread = new Thread {
+          //              override def run {
+          //                // your custom behavior here
+          //                new Alert(AlertType.Information, "Hello Dialogs!!!").showAndWait()
+          //              }
+          //            }
+          //          Platform.runLater( new Runnable {
+          //            override def run(): Unit = {
+          //              new Alert(AlertType.Information, "Hello Dialogs!!!").showAndWait()
+          //            }
+          //          })
+        }
+        else if (!getCombo(monthCombo).equals(0) && !getCombo(dayCombo).equals(0)) {
+          //          query = Main2.searchByDate(df,yearCombo.getPromptText.toInt, monthCombo.getPromptText.toInt)
+          subQuery = Main2.searchByDay(Main2.searchByMonth(subQuery, getCombo(monthCombo)), getCombo(dayCombo))
+        }
+
+        if (!keyword.getText.equals("")) {
+          println(keyword.getText)
+          //          query.saveAsTextFile("prova3")
+          subQuery = Main2.searchByKey(subQuery, keyword.getText)
+
+        }
+
+        if (!latitude.getText.equals("") && !longitude.getText.equals("")) {
+          subQuery = Main2.searchByLatLon(subQuery, latitude.getText.toDouble, longitude.getText.toDouble)
+        }
+        else if (latitude.getText.equals("") ^ longitude.getText.equals("")) {
+          ok = false
+          new Alert(AlertType.Error) {
+            initOwner(stage)
+            title = "Error Dialog"
+            headerText = "Error"
+            contentText = "You must indicate both latitude \nand longitude for the query!"
           }.showAndWait()
         }
-//        subQuery.saveAsTextFile("fine?")
-//        query.saveAsTextFile("prova2")
-        anchor.children.-=(table)
-        table = output(subQuery.collect())
-        AnchorPane.setTopAnchor(table, 5)
-        AnchorPane.setBottomAnchor(table, 5)
-        AnchorPane.setLeftAnchor(table, img.width.toDouble)
-        AnchorPane.setRightAnchor(table, 5)
-        anchor.children ++= List(table)
+        //        subQuery.saveAsTextFile("fine?")
+        //        query.saveAsTextFile("prova2")
+
+        if (ok) {
+          anchor.children.-=(table)
+          table = output(subQuery.collect())
+          AnchorPane.setTopAnchor(table, 5)
+          AnchorPane.setBottomAnchor(table, 5)
+          AnchorPane.setLeftAnchor(table, img.width.toDouble)
+          AnchorPane.setRightAnchor(table, 5)
+          anchor.children ++= List(table)
+      }
 //        grid.-=(progress)
-//        query = subQuery
+        query = subQuery
 //        root = anchor
       }
 
