@@ -133,11 +133,5 @@ object Main2 extends App {
     return query
   }
 
-  def output2(rdd : RDD[String], txtA : TextArea) ={
-//    val rdd2 = rdd.cache()
-    rdd.flatMap(lines => lines.split("\n")).map(x =>{
-      val arr = x.split(",")
-      txtA.appendText(arr(9) + "\t" + arr(10) + "\t" + arr(11) + "\t" + ("%1.2f".format(arr(7).toDouble)).toString + "\t" + ("%1.2f".format(arr(8).toDouble)).toString + "\t" + arr(1) + "\t" + arr(2) + "\t" + arr(3) + "\t" + arr(4) + "\t" + arr(5) + "\t" + arr(12) + "\t" + arr(13) + "\n")
-    })
-  }
+
   }
