@@ -7,7 +7,7 @@ object Main extends App {
     val master = SparkSession.builder
       .master("local[*]")
       .appName("Global Earthquakes")
-      .getOrCreate
+      .getOrCreate()
 
     val df2 = master.sparkContext.textFile("src/USGS_global_1900-2018_final.csv", 4).mapPartitions(_.drop(1)) //remove header
     return df2
@@ -66,15 +66,11 @@ object Main extends App {
       return query
     }
 
-    def searchByDateRange(df2: RDD[String], minYear: Int = 1900, maxYear: Int = 2018, minMonth: Int = 1, maxMonth: Int = 12, minDay: Int = 1, maxDay: Int = 31): RDD[String] = {
+    def searchByYearInterval(df2: RDD[String], minYear: Int = 1900, maxYear: Int = 2018): RDD[String] = {
       val query = df2
         .flatMap(lines => lines.split("\n")
           .filter(value => value.split(",")(1).toDouble >= minYear)
           .filter(value => value.split(",")(1).toDouble <= maxYear)
-          .filter(value => value.split(",")(2).toDouble >= minMonth)
-          .filter(value => value.split(",")(2).toDouble <= maxMonth)
-          .filter(value => value.split(",")(3).toDouble >= minDay)
-          .filter(value => value.split(",")(3).toDouble <= maxDay)
         )
       return query
     }

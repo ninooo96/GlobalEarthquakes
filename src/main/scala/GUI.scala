@@ -421,19 +421,19 @@ object GUI extends JFXApp {
         if (!yearMin.getText.equals("") && !yearMax.getText.equals("")) {
           if (doubleControl(yearMin.getText, info) && doubleControl(yearMax.getText, info)) {
             ok = true
-            subQuery = Main.searchByDateRange(subQuery, minYear = yearMin.getText.toInt, maxYear = yearMax.getText.toInt)
+            subQuery = Main.searchByYearInterval(subQuery, minYear = yearMin.getText.toInt, maxYear = yearMax.getText.toInt)
           }
         }
         else if (!yearMin.getText.equals("")) {
           if(doubleControl(yearMin.getText, info)){
             ok = true
-            subQuery = Main.searchByDateRange(subQuery, minYear = yearMin.getText.toInt)
+            subQuery = Main.searchByYearInterval(subQuery, minYear = yearMin.getText.toInt)
           }
         }
         else if (!yearMax.getText.equals("")) {
           if(doubleControl(yearMax.getText, info)){
             ok = true
-            subQuery = Main.searchByDateRange(subQuery, maxYear = yearMax.getText.toInt)
+            subQuery = Main.searchByYearInterval(subQuery, maxYear = yearMax.getText.toInt)
           }
         }
 

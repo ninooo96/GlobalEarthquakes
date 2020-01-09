@@ -1,4 +1,4 @@
-name := "untitled1"
+name := "Global Earthquakes"
 
 version := "0.1"
 
@@ -25,3 +25,4 @@ libraryDependencies ++= javaFXModules.map( m =>
 libraryDependencies += "org.apache.spark" %% "spark-core" % "2.4.4"
 // https://mvnrepository.com/artifact/org.apache.spark/spark-sql
 libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.4"
+
