@@ -478,6 +478,9 @@ object GUI extends JFXApp {
 
         if (!keyword.getText.equals("")) {
           ok = true
+          if(keyword.getText.size==2){
+            subQuery = Main.searchByState(subQuery,keyword.getText)
+          }
           subQuery = Main.searchByKey(subQuery, keyword.getText)
         }
 

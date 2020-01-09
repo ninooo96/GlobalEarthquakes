@@ -75,6 +75,15 @@ object Main extends App {
       return query
     }
 
+  def searchByState(df2: RDD[String], state: String) : RDD[String] = {
+    val stateUp = state.toUpperCase()
+    val query = df2
+      .flatMap(lines => lines.split("\n")
+        .filter(value => value.split(",")(11)== stateUp)
+      )
+    return query
+  }
+
   def searchByLatLon(df2 : RDD[String], lat : Double, lon : Double): RDD[String] ={
     val precision = 0.25
     val query = df2
